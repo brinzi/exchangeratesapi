@@ -1,8 +1,16 @@
 import ujson
 import urllib.parse as urlparse
+import ssl
 
 from functools import wraps
 from inspect import isawaitable
+
+
+ctx = ssl.create_default_context(cafile="")
+ctx.check_hostname = False
+ctx.verify_mode = ssl.CERT_NONE
+
+
 
 from gino.ext.sanic import Gino as GinoBase
 from sanic.response import BaseHTTPResponse
@@ -15,6 +23,7 @@ class Gino(GinoBase):
             bind,
             loop=loop,
             json_serializer=ujson.dumps,
+            ssl=ctx,
             json_deserializer=ujson.loads,
             **kwargs
         )
